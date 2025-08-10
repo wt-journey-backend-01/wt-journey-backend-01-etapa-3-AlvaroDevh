@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require("uuid");
 const agentesRepository = require("../repositories/agentesRepository");
 
 
@@ -54,7 +53,6 @@ async function cadastrarAgente(req, res) {
         return res.status(400).json({ message: "Cargo inválido ou obrigatório. Use 'inspetor' ou 'delegado'." });
     }
     const novoAgente = {
-        id: uuidv4(),
         nome,
         dataDeIncorporacao,
         cargo

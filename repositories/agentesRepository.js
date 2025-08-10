@@ -10,10 +10,13 @@ async function findById(id) {
 }
 
 async function create(data) {
-  const [novoAgente] = await db('agentes')
-    .insert(data)
-    .returning('*');
-  return novoAgente;
+  const [id] = await db('agentes').insert({
+    nome: data.nome,
+    dataDeIncorporacao: data.dataDeIncorporacao,
+    cargo: data.cargo
+  }).returning('id');
+
+  return findById(id);
 }
 
 async function update(id, novoAgente) {

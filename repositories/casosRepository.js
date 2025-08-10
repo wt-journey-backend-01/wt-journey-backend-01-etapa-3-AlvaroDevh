@@ -10,16 +10,21 @@ async function casoID(id) {
 
 async function cadastrarCaso(novoCaso) {
   const [casoInserido] = await db('casos')
-    .insert(novoCaso)
+    .insert({
+      titulo: novoCaso.titulo,
+      descricao: novoCaso.descricao,
+      status: novoCaso.status,
+      agente_id: novoCaso.agente_id
+    })
     .returning('*');
   return casoInserido;
 }
 
-async function findIndexById(id) {
+async function findById (id) {
   return await casoID(id);
 }
 
-async function deletarPorIndice(id) {
+async function removeById(id) {
   const deletados = await db('casos')
     .where({ id })
     .del();
@@ -34,7 +39,7 @@ module.exports = {
   listarCasos,
   casoID,
   cadastrarCaso,
-  findIndexById,
-  deletarPorIndice,
+  findById ,
+  removeById,
   findByAgenteId,
 };

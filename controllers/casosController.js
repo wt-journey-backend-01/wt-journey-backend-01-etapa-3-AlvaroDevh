@@ -1,7 +1,6 @@
 const casosRepository = require("../repositories/casosRepository")
 const agentesRepository = require("../repositories/agentesRepository");
 
-const { v4: uuidv4 } = require("uuid");
 
 async function listarCasos(req, res) {
     const { status, agente_id, q } = req.query;
@@ -55,7 +54,6 @@ async function cadastrarCaso(req, res) {
     }
 
     const novoCaso = {
-        id: uuidv4(),
         titulo,
         descricao,
         status,
