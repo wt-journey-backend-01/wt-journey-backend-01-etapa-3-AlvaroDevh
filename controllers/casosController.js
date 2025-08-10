@@ -3,10 +3,10 @@ const agentesRepository = require("../repositories/agentesRepository");
 
 const { v4: uuidv4 } = require("uuid");
 
-function listarCasos(req, res) {
+async function listarCasos(req, res) {
     const { status, agente_id, q } = req.query;
 
-    let resultado = casosRepository.listarCasos();
+    let resultado =  await casosRepository.listarCasos();
 
     if (status) {
         resultado = resultado.filter(c => c.status.toLowerCase() === status.toLowerCase());
@@ -28,9 +28,9 @@ function listarCasos(req, res) {
 }
 
 
-function getCasoID(req, res) {
+async function getCasoID(req, res) {
     const id = req.params.id;
-    const caso = casosRepository.casoID(id);
+    const caso = await casosRepository.casoID(id);
 
     if (!caso) {
         return res.status(404).json({ message: "Caso não encontrado" });
@@ -38,11 +38,11 @@ function getCasoID(req, res) {
 
     res.status(200).json(caso);
 }
-function cadastrarCaso(req, res) {
+async function cadastrarCaso(req, res) {
 
     const { titulo, descricao, status, agente_id } = req.body;
 
-    const agenteExiste = agentesRepository.findById(agente_id);
+    const agenteExiste = await agentesRepository.findById(agente_id);
     if (!agenteExiste) {
         return res.status(404).json({ message: "Agente responsável não encontrado." });
     }
@@ -61,12 +61,12 @@ function cadastrarCaso(req, res) {
         status,
         agente_id
     };
-    casosRepository.cadastrarCaso(novoCaso);
+       await casosRepository.cadastrarCaso(novoCaso); 
     res.status(201).json(novoCaso);
 
 }
 
-function editarCaso(req, res) {
+async function editarCaso(req, res) {
     const id = req.params.id;
     const { titulo, descricao, status, agente_id } = req.body;
 
@@ -78,7 +78,7 @@ function editarCaso(req, res) {
         return res.status(400).json({ message: 'Status deve ser "aberto" ou "solucionado".' });
     }
 
-    const caso = casosRepository.casoID(id);
+    const caso = await casosRepository.casoID(id);  
     if (!caso) {
         return res.status(404).json({ message: 'Caso não encontrado.' });
     }
@@ -91,9 +91,9 @@ function editarCaso(req, res) {
     res.status(200).json(caso);
 }
 
-function atualizarParcialCaso(req, res) {
+async function atualizarParcialCaso(req, res) {
     const id = req.params.id;
-    const caso = casosRepository.casoID(id);
+    const caso = await casosRepository.casoID(id);
 
     if (!caso) {
         return res.status(404).json({ message: 'Caso não encontrado.' });
@@ -114,9 +114,9 @@ function atualizarParcialCaso(req, res) {
     res.status(200).json(caso);
 }
 
-function deletarCaso(req, res) {
+async function deletarCaso(req, res) {
     const id = req.params.id;
-    const index = casosRepository.findIndexById(id);
+    const index = await casosRepository.findIndexById(id);
 
     if (index === -1) {
         return res.status(404).json({ message: 'Caso não encontrado.' });
@@ -125,29 +125,28 @@ function deletarCaso(req, res) {
     casosRepository.deletarPorIndice(index);
     res.status(204).send();
 }
-
-function listarCasosPorAgente(req, res) {
+async function listarCasosPorAgente(req, res) {
     const { agente_id } = req.query;
 
     if (!agente_id) {
         return res.status(400).json({ message: "O parâmetro agente_id é obrigatório." });
     }
 
-    const casosFiltrados = casosRepository.findByAgenteId(agente_id);
+    const casosFiltrados = await casosRepository.findByAgenteId(agente_id);  
 
     res.status(200).json(casosFiltrados);
 }
 
 
-function buscarAgenteDoCaso(req, res) {
+async function buscarAgenteDoCaso(req, res) {
     const { caso_id } = req.params;
 
-    const caso = casosRepository.findById(caso_id);
+    const caso =  await casosRepository.findById(caso_id);
     if (!caso) {
         return res.status(404).json({ message: "Caso não encontrado." });
     }
 
-    const agente = agentesRepository.findById(caso.agente_id);
+    const agente = await agentesRepository.findById(caso.agente_id); 
     if (!agente) {
         return res.status(404).json({ message: "Agente responsável não encontrado." });
     }
@@ -156,7 +155,8 @@ function buscarAgenteDoCaso(req, res) {
 }
 
 
-function buscarCasos(req, res) {
+
+async function buscarCasos(req, res) {
     const { q } = req.query;
 
     if (!q || q.trim() === "") {
@@ -164,7 +164,9 @@ function buscarCasos(req, res) {
     }
 
     const termo = q.toLowerCase();
-    const resultado = casosRepository.listarCasos().filter(caso =>
+    const resultadoCompleto = await casosRepository.listarCasos();
+
+    const resultado = resultadoCompleto.filter(caso =>
         caso.titulo.toLowerCase().includes(termo) ||
         caso.descricao.toLowerCase().includes(termo)
     );

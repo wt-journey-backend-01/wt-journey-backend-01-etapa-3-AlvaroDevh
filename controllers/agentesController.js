@@ -2,8 +2,8 @@ const { v4: uuidv4 } = require("uuid");
 const agentesRepository = require("../repositories/agentesRepository");
 
 
-function listarAgentes(req, res) {
-    let agentes = agentesRepository.findAll();
+async function listarAgentes(req, res) {
+    let agentes =  await  agentesRepository.findAll();
 
     const { cargo, sort } = req.query;
 
@@ -30,15 +30,15 @@ function listarAgentes(req, res) {
 }
 
 
-function buscarAgentePorId(req, res) {
-    const agente = agentesRepository.findById(req.params.id);
+async function buscarAgentePorId(req, res) {
+    const agente = await agentesRepository.findById(req.params.id);
     if (!agente) {
         return res.status(404).json({ message: "Agente não encontrado." });
     }
     res.status(200).json(agente);
 }
 
-function cadastrarAgente(req, res) {
+async function cadastrarAgente(req, res) {
     const { nome, dataDeIncorporacao, cargo } = req.body;
 
     if (!isValidDate(dataDeIncorporacao)) {
@@ -60,11 +60,11 @@ function cadastrarAgente(req, res) {
         cargo
     };
 
-    agentesRepository.create(novoAgente);
-    res.status(201).json(novoAgente);
+    const criado = await agentesRepository.create(novoAgente);
+    res.status(201).json(criado);
 }
 
-function atualizarAgente(req, res) {
+async function atualizarAgente(req, res) {
     const { id } = req.params;
     const { nome, dataDeIncorporacao, cargo, id: idDoBody } = req.body;
 
@@ -72,7 +72,8 @@ function atualizarAgente(req, res) {
         return res.status(400).json({ message: "O campo 'id' não pode ser modificado." });
     }
 
-    if (!agentesRepository.findById(id)) {
+    const agenteExistente = await agentesRepository.findById(id); 
+    if (!agenteExistente) {
         return res.status(404).json({ message: "Agente não encontrado para o id fornecido." });
     }
 
@@ -80,13 +81,13 @@ function atualizarAgente(req, res) {
         return res.status(400).json({ message: "Todos os campos são obrigatórios." });
     }
 
-    const atualizado = agentesRepository.update(id, { nome, dataDeIncorporacao, cargo });
+    const atualizado = await agentesRepository.update(id, { nome, dataDeIncorporacao, cargo }); 
 
     res.status(200).json(atualizado);
 }
 
 
-function atualizarParcialAgente(req, res) {
+async function atualizarParcialAgente(req, res) {
     const { id } = req.params;
     const atualizacao = req.body;
 
@@ -98,18 +99,18 @@ function atualizarParcialAgente(req, res) {
         return res.status(400).json({ message: "É necessário fornecer dados para atualizar." });
     }
 
-    if (!agentesRepository.findById(id)) {
+    const agenteExistente = await agentesRepository.findById(id); 
+    if (!agenteExistente) {
         return res.status(404).json({ message: "Agente não encontrado." });
     }
 
-    const atualizado = agentesRepository.updatePartial(id, atualizacao);
+    const atualizado = await agentesRepository.updatePartial(id, atualizacao); 
 
     res.status(200).json(atualizado);
 }
 
-
-function removerAgente(req, res) {
-    const removido = agentesRepository.remove(req.params.id);
+async function removerAgente(req, res) {
+    const removido = await agentesRepository.remove(req.params.id);
 
     if (!removido) {
         return res.status(404).json({ message: "Agente não encontrado." });
@@ -118,7 +119,7 @@ function removerAgente(req, res) {
     res.status(204).send();
 }
 
-function isValidDate(dateString) {
+ function isValidDate(dateString) {
     const regex = /^\d{4}-\d{2}-\d{2}$/;
     if (!regex.test(dateString)) return false;
     const date = new Date(dateString);
