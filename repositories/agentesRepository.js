@@ -42,11 +42,29 @@ async function remove(id) {
   return deletados > 0;
 }
 
+async function findAllFiltered({ cargo, sort }) {
+  let query = db("agentes");
+
+  if (cargo) {
+    query = query.whereRaw("LOWER(cargo) = ?", cargo.toLowerCase());
+  }
+
+  if (sort === "dataDeIncorporacao") {
+    query = query.orderBy("dataDeIncorporacao", "asc");
+  } else if (sort === "-dataDeIncorporacao") {
+    query = query.orderBy("dataDeIncorporacao", "desc");
+  }
+
+  return await query.select("*");
+}
+
+
 module.exports = {
   findAll,
   findById,
   create,
   update,
   updatePartial,
-  remove
+  remove,
+  findAllFiltered
 };

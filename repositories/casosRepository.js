@@ -25,15 +25,23 @@ async function findById (id) {
 }
 
 async function removeById(id) {
-  const deletados = await db('casos')
-    .where({ id })
-    .del();
-  return deletados > 0;
+  const linhasAfetadas = await db("casos").where({ id }).del();
+  return linhasAfetadas > 0; 
 }
+
 
 async function findByAgenteId(agente_id) {
   return await db('casos').where({ agente_id });
 }
+
+async function update(id, dados) {
+  await db("casos").where({ id }).update(dados);
+}
+
+async function updatePartial(id, dados) {
+  await db("casos").where({ id }).update(dados);
+}
+
 
 module.exports = {
   listarCasos,
@@ -42,4 +50,6 @@ module.exports = {
   findById ,
   removeById,
   findByAgenteId,
+  updatePartial,
+  update,
 };

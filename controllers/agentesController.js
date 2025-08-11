@@ -2,31 +2,11 @@ const agentesRepository = require("../repositories/agentesRepository");
 
 
 async function listarAgentes(req, res) {
-    let agentes =  await  agentesRepository.findAll();
-
-    const { cargo, sort } = req.query;
-
-    if (cargo) {
-        const cargoValido = ["inspetor", "delegado"];
-        if (!cargoValido.includes(cargo.toLowerCase())) {
-            return res.status(400).json({ message: "Cargo inválido. Use 'inspetor' ou 'delegado'." });
-        }
-
-        agentes = agentes.filter(agente => agente.cargo.toLowerCase() === cargo.toLowerCase());
-    }
-
-    if (sort) {
-        if (sort === "dataDeIncorporacao") {
-            agentes.sort((a, b) => new Date(a.dataDeIncorporacao) - new Date(b.dataDeIncorporacao));
-        } else if (sort === "-dataDeIncorporacao") {
-            agentes.sort((a, b) => new Date(b.dataDeIncorporacao) - new Date(a.dataDeIncorporacao));
-        } else {
-            return res.status(400).json({ message: "Parâmetro de ordenação inválido. Use 'dataDeIncorporacao' ou '-dataDeIncorporacao'." });
-        }
-    }
-
-    res.status(200).json(agentes);
+  const { cargo, sort } = req.query;
+  const agentes = await agentesRepository.findAllFiltered({ cargo, sort });
+  res.json(agentes);
 }
+
 
 
 async function buscarAgentePorId(req, res) {
@@ -63,7 +43,10 @@ async function cadastrarAgente(req, res) {
 }
 
 async function atualizarAgente(req, res) {
-    const { id } = req.params;
+const id = Number(req.params.id);
+if (isNaN(id)) {
+  return res.status(400).json({ message: "ID inválido." });
+}
     const { nome, dataDeIncorporacao, cargo, id: idDoBody } = req.body;
 
     if (idDoBody && idDoBody !== id) {
@@ -86,7 +69,10 @@ async function atualizarAgente(req, res) {
 
 
 async function atualizarParcialAgente(req, res) {
-    const { id } = req.params;
+const id = Number(req.params.id);
+if (isNaN(id)) {
+  return res.status(400).json({ message: "ID inválido." });
+}
     const atualizacao = req.body;
 
     if ("id" in atualizacao) {
