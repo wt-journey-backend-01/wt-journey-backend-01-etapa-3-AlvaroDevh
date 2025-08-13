@@ -243,5 +243,4 @@ router.delete('/casos/:id', casosController.deletarCaso);
 router.get("/casos/:caso_id/agente", casosController.buscarAgenteDoCaso);
 
 
-
 module.exports = router;

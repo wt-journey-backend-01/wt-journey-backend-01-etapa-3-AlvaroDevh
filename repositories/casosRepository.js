@@ -42,6 +42,27 @@ async function updatePartial(id, dados) {
   await db("casos").where({ id }).update(dados);
 }
 
+async function listarCasosComFiltros({ status, agente_id, q }) {
+  let query = db('casos');
+
+  if (status) {
+    query = query.where('status', status);
+  }
+
+  if (agente_id) {
+    query = query.where('agente_id', agente_id);
+  }
+
+  if (q) {
+    query = query.where(function() {
+      this.where('titulo', 'ilike', `%${q}%`)
+          .orWhere('descricao', 'ilike', `%${q}%`);
+    });
+  }
+
+  return await query.select('*');
+}
+
 
 module.exports = {
   listarCasos,
@@ -52,4 +73,6 @@ module.exports = {
   findByAgenteId,
   updatePartial,
   update,
+  listarCasosComFiltros,
+
 };
