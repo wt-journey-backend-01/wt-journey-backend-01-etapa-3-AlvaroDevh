@@ -35,11 +35,13 @@ async function findByAgenteId(agente_id) {
 }
 
 async function update(id, dados) {
-  await db("casos").where({ id }).update(dados);
+  const [casoAtualizado] = await db("casos").where({ id }).update(dados).returning('*');
+  return casoAtualizado || null;
 }
 
 async function updatePartial(id, dados) {
-  await db("casos").where({ id }).update(dados);
+  const [casoAtualizado] = await db("casos").where({ id }).update(dados).returning('*');
+  return casoAtualizado || null;
 }
 
 async function listarCasosComFiltros({ status, agente_id, q }) {

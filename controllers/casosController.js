@@ -5,7 +5,7 @@ const agentesRepository = require("../repositories/agentesRepository");
 async function listarCasos(req, res) {
     const { status, agente_id, q } = req.query;
 
-    let resultado =  await casosRepository.listarCasosComFiltros();
+    let resultado =  await casosRepository.listarCasosComFiltros({ status, agente_id, q });
 
     if (status) {
         resultado = resultado.filter(c => c.status.toLowerCase() === status.toLowerCase());
@@ -152,7 +152,7 @@ async function listarCasosPorAgente(req, res) {
 
 
 async function buscarAgenteDoCaso(req, res) {
-const caso_id = Number(req.params.id);
+const caso_id = Number(req.params.caso_id);
 if (isNaN(caso_id)) {
   return res.status(400).json({ message: "ID inválido." });
 }
