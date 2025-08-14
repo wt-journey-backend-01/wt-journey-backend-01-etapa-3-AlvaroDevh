@@ -36,7 +36,7 @@ const casosController = require('../controllers/casosController');
  *       200:
  *         description: Lista de casos
  */
-router.get("/casos", casosController.listarCasos);
+router.get("/", casosController.listarCasos);
 
 /**
  * @swagger
@@ -58,7 +58,7 @@ router.get("/casos", casosController.listarCasos);
  *         description: Query string 'q' ausente ou inválida
  */
 
-router.get("/casos/search", casosController.buscarCasos);
+router.get("/search", casosController.buscarCasos);
 
 /**
  * @swagger
@@ -79,7 +79,7 @@ router.get("/casos/search", casosController.buscarCasos);
  *       404:
  *         description: Caso não encontrado
  */
-router.get('/casos/:id', casosController.getCasoID);
+router.get('/:id', casosController.getCasoID);
 
 /**
  * @swagger
@@ -116,7 +116,7 @@ router.get('/casos/:id', casosController.getCasoID);
  *       404:
  *         description: Agente não encontrado
  */
-router.post('/casos', casosController.cadastrarCaso);
+router.post('/', casosController.cadastrarCaso);
 
 
 /**
@@ -160,7 +160,7 @@ router.post('/casos', casosController.cadastrarCaso);
  *       404:
  *         description: Caso não encontrado
  */
-router.put('/casos/:id', casosController.editarCaso);
+router.put('/:id', casosController.editarCaso);
 
 /**
  * @swagger
@@ -198,7 +198,7 @@ router.put('/casos/:id', casosController.editarCaso);
  *         description: Caso não encontrado
  */
 
-router.patch('/casos/:id', casosController.atualizarParcialCaso);
+router.patch('/:id', casosController.atualizarParcialCaso);
 
 /**
  * @swagger
@@ -219,7 +219,7 @@ router.patch('/casos/:id', casosController.atualizarParcialCaso);
  *         description: Caso não encontrado
  */
 
-router.delete('/casos/:id', casosController.deletarCaso);
+router.delete('/:id', casosController.deletarCaso);
 
 /**
  * @swagger
@@ -240,7 +240,7 @@ router.delete('/casos/:id', casosController.deletarCaso);
  *       404:
  *         description: Caso ou agente não encontrado
  */
-router.get("/casos/:caso_id/agente", casosController.buscarAgenteDoCaso);
+router.get("/:caso_id/agente", casosController.buscarAgenteDoCaso);
 
 
 module.exports = router;

@@ -5,23 +5,7 @@ const agentesRepository = require("../repositories/agentesRepository");
 async function listarCasos(req, res) {
     const { status, agente_id, q } = req.query;
 
-    let resultado =  await casosRepository.listarCasosComFiltros({ status, agente_id, q });
-
-    if (status) {
-        resultado = resultado.filter(c => c.status.toLowerCase() === status.toLowerCase());
-    }
-
-    if (agente_id) {
-        resultado = resultado.filter(c => c.agente_id === agente_id);
-    }
-
-    if (q) {
-        const termo = q.toLowerCase();
-        resultado = resultado.filter(c =>
-            c.titulo.toLowerCase().includes(termo) ||
-            c.descricao.toLowerCase().includes(termo)
-        );
-    }
+    const resultado = await casosRepository.listarCasosComFiltros({ status, agente_id, q });
 
     res.status(200).json(resultado);
 }
@@ -62,8 +46,8 @@ async function cadastrarCaso(req, res) {
         status,
         agente_id
     };
-       await casosRepository.cadastrarCaso(novoCaso); 
-    res.status(201).json(novoCaso);
+    const casoCriado = await casosRepository.cadastrarCaso(novoCaso);
+    res.status(201).json(casoCriado);
 
 }
 
